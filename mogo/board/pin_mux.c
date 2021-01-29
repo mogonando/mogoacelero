@@ -32,6 +32,8 @@ void BOARD_InitBootPins(void)
 {
     BOARD_InitPins();
     BOARD_ledspints();
+    BOARD_idc0pints();
+    MA8451_Inipints();
 }
 
 /* clang-format off */
@@ -125,6 +127,77 @@ BOARD_ledspints:
  * END ****************************************************************************************************************/
 void BOARD_ledspints(void)
 {
+}
+
+/* clang-format off */
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+BOARD_idc0pints:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: '23', peripheral: I2C0, signal: SCL, pin_signal: PTB3/IRQ_10/I2C0_SCL/UART0_TX}
+  - {pin_num: '24', peripheral: I2C0, signal: SDA, pin_signal: PTB4/IRQ_11/I2C0_SDA/UART0_RX}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+/* clang-format on */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_idc0pints
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_idc0pints(void)
+{
+    /* Port B Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortB);
+
+    /* PORTB3 (pin 23) is configured as I2C0_SCL */
+    PORT_SetPinMux(BOARD_IDC0PINTS_ACCEL_SCL_PORT, BOARD_IDC0PINTS_ACCEL_SCL_PIN, kPORT_MuxAlt2);
+
+    /* PORTB4 (pin 24) is configured as I2C0_SDA */
+    PORT_SetPinMux(BOARD_IDC0PINTS_ACCEL_SDA_PORT, BOARD_IDC0PINTS_ACCEL_SDA_PIN, kPORT_MuxAlt2);
+}
+
+/* clang-format off */
+/*
+ * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+MA8451_Inipints:
+- options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
+- pin_list:
+  - {pin_num: '21', peripheral: GPIOA, signal: 'GPIO, 10', pin_signal: PTA10/IRQ_8, direction: INPUT, pull_select: up, pull_enable: enable}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
+ */
+/* clang-format on */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : MA8451_Inipints
+ * Description   : Configures pin routing and optionally pin electrical features.
+ *
+ * END ****************************************************************************************************************/
+void MA8451_Inipints(void)
+{
+    /* Port A Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortA);
+
+    gpio_pin_config_t ACCEL_IRQ_8_config = {
+        .pinDirection = kGPIO_DigitalInput,
+        .outputLogic = 0U
+    };
+    /* Initialize GPIO functionality on pin PTA10 (pin 21)  */
+    GPIO_PinInit(MA8451_INIPINTS_ACCEL_IRQ_8_GPIO, MA8451_INIPINTS_ACCEL_IRQ_8_PIN, &ACCEL_IRQ_8_config);
+
+    const port_pin_config_t ACCEL_IRQ_8 = {/* Internal pull-up resistor is enabled */
+                                           kPORT_PullUp,
+                                           /* Passive filter is disabled */
+                                           kPORT_PassiveFilterDisable,
+                                           /* Low drive strength is configured */
+                                           kPORT_LowDriveStrength,
+                                           /* Pin is configured as PTA10 */
+                                           kPORT_MuxAsGpio};
+    /* PORTA10 (pin 21) is configured as PTA10 */
+    PORT_SetPinConfig(MA8451_INIPINTS_ACCEL_IRQ_8_PORT, MA8451_INIPINTS_ACCEL_IRQ_8_PIN, &ACCEL_IRQ_8);
 }
 /***********************************************************************************************************************
  * EOF
