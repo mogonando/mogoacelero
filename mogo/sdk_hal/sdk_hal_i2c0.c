@@ -6,40 +6,40 @@
  * @details
  *
 */
-/*******************************************************************************
+/***************************
  * Includes
- ******************************************************************************/
-#include <sdk_hal/sdk_hal_i2c0.h>
+ **************************/
+#include "sdk_hal_i2c0.h"
 #include "fsl_i2c.h"
-/*******************************************************************************
+/***************************
  * Definitions
- ******************************************************************************/
+ **************************/
 
 
-/*******************************************************************************
+/***************************
  * Private Prototypes
- ******************************************************************************/
+ **************************/
 
 
-/*******************************************************************************
+/***************************
  * External vars
- ******************************************************************************/
+ **************************/
 
 
-/*******************************************************************************
+/***************************
  * Local vars
- ******************************************************************************/
+ **************************/
 
 
-/*******************************************************************************
+/***************************
  * Private Source Code
- ******************************************************************************/
+ **************************/
 
 
-/*******************************************************************************
+/***************************
  * Public Source Code
- ******************************************************************************/
- /*--------------------------------------------*/
+ **************************/
+ //--------------------------------------------/
 status_t i2c0MasterInit(uint32_t baud_rate) {
 	i2c_master_config_t masterConfig;
 //	status_t status;
@@ -50,7 +50,7 @@ status_t i2c0MasterInit(uint32_t baud_rate) {
     I2C_MasterInit(I2C0, &masterConfig, CLOCK_GetFreq(I2C0_CLK_SRC));
 	return(kStatus_Success);
 }
-/*--------------------------------------------*/
+//--------------------------------------------/
 status_t i2c0MasterReadByte(uint8_t *data, uint8_t device_address, int8_t memory_address) {
 	i2c_master_transfer_t masterXfer;
 	uint8_t i2c_rx_buffer[1];
@@ -69,18 +69,25 @@ status_t i2c0MasterReadByte(uint8_t *data, uint8_t device_address, int8_t memory
 
     return(kStatus_Success);
 }
-/*--------------------------------------------*/
-status_t i2c0MasterWriteByte(uint8_t data, uint8_t direccion){
+//--------------------------------------------/
+status_t i2c0MasterWriteByte(uint8_t device_addr, uint8_t reg_addr, uint8_t value){
+
 //	/* subAddress = 0x01, data = g_master_txBuff - write to slave.
 //	 start + slaveaddress(w) + subAddress + length of data buffer + data buffer + stop*/
-//	masterXfer.slaveAddress = I2C_MASTER_SLAVE_ADDR_7BIT;
-//	masterXfer.direction = kI2C_Write;
-//	masterXfer.subaddress = (uint32_t) deviceAddress;
-//	masterXfer.subaddressSize = 1;
-//	masterXfer.data = g_master_txBuff;
-//	masterXfer.dataSize = 1;
-//	masterXfer.flags = kI2C_TransferDefaultFlag;
+	i2c_master_transfer_t masterXfer;
+	//uint8_t g_master_txBuff[1];
+
+	masterXfer.slaveAddress = device_addr;
+	masterXfer.direction = kI2C_Write;
+	masterXfer.subaddress = reg_addr;
+	masterXfer.subaddressSize = 1;
+	masterXfer.data = &value;
+	masterXfer.dataSize = 1;
+	masterXfer.flags = kI2C_TransferDefaultFlag;
 //
-//	I2C_MasterTransferBlocking(I2C0, &masterXfer);
+	I2C_MasterTransferBlocking(I2C0, &masterXfer);
+
+	//*data = g_master_txBuff[0];
+
 	return(kStatus_Success);
 }
