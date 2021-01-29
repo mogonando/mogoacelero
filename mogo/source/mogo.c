@@ -39,6 +39,10 @@
 #include "clock_config.h"
 #include "MKL02Z4.h"
 #include "fsl_debug_console.h"
+
+#include "sdk_hal_gpio.h"
+#include "sdk_hal_uart0.h"
+#include "sdk_hal_i2c0.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
